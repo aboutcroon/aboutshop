@@ -61,6 +61,7 @@ export default {
             this.$message.success('登录成功')
             window.sessionStorage.setItem('token', res.data.token)  // 使用sessionStorage存储token
             this.$router.push('/home')
+            console.log(this.$router)
           } else {
             this.$message.error('登录失败')
           }
@@ -72,7 +73,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
   .login-container {
     height: 100%;
     background: #3B3783;
