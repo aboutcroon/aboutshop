@@ -40,7 +40,6 @@
       <el-main class="main">
         main
       </el-main>
-      <router-view></router-view>
     </el-container>
   </el-container>
 </template>
@@ -52,11 +51,11 @@ export default {
     return {
       menuList: [],
       iconList: {
-        125: 'iconfont iconusername',
-        103: 'iconfont iconSmartcontract',
-        101: 'iconfont icontask',
-        102: 'iconfont iconrenwu',
-        145: 'iconfont iconContractcall',
+        '125': 'iconfont iconusername',
+        '103': 'iconfont iconSmartcontract',
+        '101': 'iconfont icontask',
+        '102': 'iconfont iconrenwu',
+        '145': 'iconfont iconContractcall',
       },
       isCollapse: false,
     }

@@ -10,11 +10,7 @@ const router = new Router({
   routes: [
     { path: '/', redirect: '/login' },
     { path: '/login', component: Login },
-    {
-      path: '/home',
-      name: 'home',
-      component: Home
-    },
+    { path: '/home', component: Home },
     { path: '/welcome', component: Welcome }
   ]
 })
