@@ -51,6 +51,7 @@ export default {
       this.$refs.loginFormRef.resetFields() // resetField是form-item方法，resetFields是form方法
     },
     loginConfirm () {
+      // validate用来在点击确定按钮时触发表单字段的校验
       this.$refs.loginFormRef.validate(async valid => {
         if (!valid) {   // 如果不合法，直接return
           return

@@ -17,16 +17,24 @@
           unique-opened
           :collapse="isCollapse"
           :collapse-transition="false"
+          router
+          :default-active="isActive"
         >
           <!-- 一级菜单 -->
-          <!-- 每个菜单要有独属于自己的index值 -->
-          <el-submenu :index="item.id" v-for="item in menuList" :key="item.id">
+          <!-- 每个菜单要有独属于自己的index值，index值需要为String，所以要加个‘’ -->
+          <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">
             <template slot="title">
               <i :class="iconList[item.id]" style="color: #ffffff"></i>
               <span>{{item.authName}}</span>
             </template>
             <!-- 二级菜单 -->
-            <el-menu-item :index="subItem.id" v-for="subItem in item.children" :key="subItem.id">
+            <!-- 上面开启了router模式，这里index即为index/后面的路径 -->
+            <el-menu-item
+              :index="subItem.path"
+              v-for="subItem in item.children"
+              :key="subItem.id"
+              @click="handleActive(subItem.path)"
+            >
               <template slot="title">
                 <i class="iconfont iconsettings"></i>
                 <span>{{subItem.authName}}</span>
@@ -38,7 +46,7 @@
       </el-aside>
       <!-- 主体区域 -->
       <el-main class="main">
-        main
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -58,10 +66,12 @@ export default {
         '145': 'iconfont iconContractcall',
       },
       isCollapse: false,
+      isActive: 'users',
     }
   },
   created() {
     this.getSide()
+    this.initActive()
   },
   methods: {
     logOut() {
@@ -70,13 +80,21 @@ export default {
     },
     async getSide() {
       const { data: res } = await this.$http.get('menus')
-      console.log(res)
       if (res.meta.status === 200) {
         this.menuList = res.data
       }
     },
     handleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    initActive() {
+      if (window.sessionStorage.getItem('isActive')) {
+        this.isActive = window.sessionStorage.getItem('isActive')
+      }
+    },
+    handleActive(activeIndex) {
+      window.sessionStorage.setItem('isActive', activeIndex)
+      this.isActive = activeIndex
     },
   },
 }
