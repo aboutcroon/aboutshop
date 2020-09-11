@@ -49,15 +49,20 @@
                 @click="editUsers(scope.row.id)"
               ></el-button>
             </el-tooltip>
-            <el-tooltip effect="dark" content="设置" placement="top-start" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
-            </el-tooltip>
             <el-tooltip effect="dark" content="删除" placement="top-start" :enterable="false">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
                 @click="removeUserById(scope.row.id)"
+              ></el-button>
+            </el-tooltip>
+            <el-tooltip effect="dark" content="分配角色" placement="top-start" :enterable="false">
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                @click="setRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -93,7 +98,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <!-- slot="footer"有 -->
+        <!-- slot="footer"有添加样式的功效 -->
         <el-button @click="addFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="addUsers">确 定</el-button>
       </span>
@@ -115,6 +120,29 @@
       <span slot="footer">
         <el-button @click="editFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="editUsersInfo">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 为用户分配角色 -->
+    <el-dialog title="分配角色" :visible.sync="setRoleDialogVisible" width="30%" @close="dispatchDialogClosed">
+      <div>
+        <p>当前的用户：{{userDispatch.username}}</p>
+        <p>当前的角色：{{userDispatch.role_name}}</p>
+        <p>
+          分配新角色：
+          <el-select v-model="selectedRoleId" placeholder="请选择" size="mini">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveRole">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -184,7 +212,13 @@ export default {
       },
       addFormVisible: false,
       editFormVisible: false,
-      userList: [],
+      setRoleDialogVisible: false,
+
+      userList: [], // 当前展示的用户列表
+      userDispatch: {}, // 当前需要被分配角色的用户信息
+
+      rolesList: [], // 可分配角色的下拉列表
+      selectedRoleId: '', // 下拉列表双向绑定值
       total: 0,
     }
   },
@@ -201,10 +235,12 @@ export default {
       this.userList = res.data.users
       this.total = res.data.total
     },
+    // 分页相关
     handleSizeChange(newSize) {
       this.userInfo.pagesize = newSize
       this.getUsers()
     },
+    // 分页相关
     handleCurrentChange(newNum) {
       this.userInfo.pagenum = newNum
       this.getUsers()
@@ -286,12 +322,48 @@ export default {
         return this.$message.info('已取消删除')
       }
       const { data: res } = await this.$http.delete(`users/${id}`)
-      if(res.meta.status !== 200) {
+      if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
       this.$message.success(res.meta.msg)
       this.getUsers()
     },
+    // 为用户分配角色
+    async setRole(row) {
+      // 获取用户以及用户当前的角色
+      this.userDispatch = row
+
+      // 获取所有角色到下拉列表中
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg)
+      }
+      this.rolesList = res.data
+      this.setRoleDialogVisible = true
+    },
+    // 为用户保存分配的新角色
+    async saveRole() {
+      if (!this.selectedRoleId) {
+        return this.$message.error('请选择要分配的角色')
+      }
+      const { data: res } = await this.$http.put(
+        `users/${this.userDispatch.id}/role`,
+        {
+          rid: this.selectedRoleId,
+        }
+      )
+      if(res.meta.status !== 200) {
+        return this.$message.error(res.meta.msg)
+      }
+      this.$message.success(res.meta.msg)
+      this.getUsers()
+      this.setRoleDialogVisible = false
+    },
+    // 分配角色弹窗关闭时
+    dispatchDialogClosed() {
+      this.selectedRoleId = ''
+      this.userDispatch = {}  // 同时将当前row的数据清空
+    }
   },
 }
 </script>
