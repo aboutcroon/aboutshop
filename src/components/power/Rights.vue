@@ -27,23 +27,23 @@
 <script>
 export default {
   name: 'Rights',
-  data(){
+  data () {
     return {
-      rightsList: [],
+      rightsList: []
     }
   },
-  created() {
+  created () {
     this.getRightsList()
   },
   methods: {
-    async getRightsList() {
+    async getRightsList () {
       const { data: res } = await this.$http.get('rights/list')
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
       this.rightsList = res.data
-    },
-  },
+    }
+  }
 }
 </script>
 
