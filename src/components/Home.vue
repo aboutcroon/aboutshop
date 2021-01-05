@@ -55,7 +55,7 @@
 <script>
 export default {
   name: 'Home',
-  data() {
+  data () {
     return {
       menuList: [],
       iconList: {
@@ -63,40 +63,40 @@ export default {
         '103': 'iconfont iconSmartcontract',
         '101': 'iconfont icontask',
         '102': 'iconfont iconrenwu',
-        '145': 'iconfont iconContractcall',
+        '145': 'iconfont iconContractcall'
       },
       isCollapse: false,
-      isActive: 'users',
+      isActive: 'users'
     }
   },
-  created() {
+  created () {
     this.getSide()
     this.initActive()
   },
   methods: {
-    logOut() {
+    logOut () {
       window.sessionStorage.clear()
       this.$router.push('/login')
     },
-    async getSide() {
+    async getSide () {
       const { data: res } = await this.$http.get('menus')
       if (res.meta.status === 200) {
         this.menuList = res.data
       }
     },
-    handleCollapse() {
+    handleCollapse () {
       this.isCollapse = !this.isCollapse
     },
-    initActive() {
+    initActive () {
       if (window.sessionStorage.getItem('isActive')) {
         this.isActive = window.sessionStorage.getItem('isActive')
       }
     },
-    handleActive(activeIndex) {
+    handleActive (activeIndex) {
       window.sessionStorage.setItem('isActive', activeIndex)
       this.isActive = activeIndex
-    },
-  },
+    }
+  }
 }
 </script>
 
