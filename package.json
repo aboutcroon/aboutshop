@@ -95,7 +95,7 @@
     }
   },
   "lint-staged": {
-    "src/**": [
+    "src/*": [
         "eslint --fix"
     ]
   }
