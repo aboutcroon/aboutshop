@@ -53,21 +53,20 @@ export default {
     loginConfirm () {
       // validate用来在点击确定按钮时触发表单字段的校验
       this.$refs.loginFormRef.validate(async valid => {
-        if (!valid) {   // 如果不合法，直接return
-          return
-        } else {  // 若数据合法，则发送ajax请求
-          const result = await this.$http.post('login', this.loginForm)  // promise的then里返回的data，令其为result
-          const { data: res } = result  // 对象解构，挑出result中的key为data的数据，放到res中
+        if (!valid) { // 如果不合法，直接return
+
+        } else { // 若数据合法，则发送ajax请求
+          const result = await this.$http.post('login', this.loginForm) // promise的then里返回的data，令其为result
+          const { data: res } = result // 对象解构，挑出result中的key为data的数据，放到res中
           if (res.meta.status === 200) {
             this.$message.success('登录成功')
-            window.sessionStorage.setItem('token', res.data.token)  // 使用sessionStorage存储token
+            window.sessionStorage.setItem('token', res.data.token) // 使用sessionStorage存储token
             this.$router.push('/home')
             console.log(this.$router)
           } else {
             this.$message.error('登录失败')
           }
         }
-
       })
     }
   }
